@@ -16,7 +16,7 @@ Based in Mogadishu, Somalia 🇸🇴 — building data-driven web applications a
 
 | Project | Description |
 |---|---|
-| [ahmed-portfolio-site](https://github.com/ahmedmuse-dev/ahmed-portfolio-site) | Personal portfolio website showcasing my projects and skills |
+| [My portfolio](https://ahmedmuse-dev.onrender.com/) | Personal portfolio website showcasing my projects and skills |
 | [Python-fundamental](https://github.com/ahmedmuse-dev/Python-fundamental) | Core Python concepts and practice exercises |
 
 <!-- Add new projects here as you finish them:
