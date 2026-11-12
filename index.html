@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+l<!DOCTYPE html>
 <html lang="en" class="scroll-smooth dark">
 <head>
     <meta charset="UTF-8">
@@ -196,6 +196,14 @@
             display: grid; place-items: center;
         }
         .dot::after { content: ''; width: 8px; height: 8px; border-radius: 9999px; background: var(--accent); }
+
+        /* Courses */
+        .course-card { padding: 1.5rem; display: flex; flex-direction: column; position: relative; overflow: hidden; }
+        .course-card::before { content: ''; position: absolute; left: 0; right: 0; top: 0; height: 3px; background: linear-gradient(120deg, var(--g1), var(--g2)); opacity: .9; }
+        .course-icon { width: 52px; height: 52px; border-radius: 16px; display: grid; place-items: center; font-size: 1.35rem; color: #fff; background: var(--btn); box-shadow: 0 10px 24px -10px rgba(124, 58, 237, .7); }
+        .course-intro { font-size: .9rem; line-height: 1.7; color: var(--muted); }
+        .btn-wa-sm { display: inline-flex; align-items: center; gap: .45rem; padding: .45rem .9rem; border-radius: 999px; font-size: .78rem; font-weight: 600; color: #22c55e; background: rgba(34, 197, 94, .12); border: 1px solid rgba(34, 197, 94, .35); transition: background .2s, color .2s; }
+        @media (hover: hover) { .btn-wa-sm:hover { background: #22c55e; color: #fff; } }
     </style>
 </head>
 <body>
@@ -219,6 +227,7 @@
                     <a href="#experience" class="nav-link">Experience</a>
                     <a href="#skills" class="nav-link">Skills</a>
                     <a href="#certifications" class="nav-link">Certifications</a>
+                    <a href="#courses" class="nav-link">Courses</a>
                     <a href="#contact" class="nav-link">Contact</a>
                 </div>
 
@@ -238,6 +247,7 @@
                 <a href="#experience" class="block py-2.5 font-medium">Experience</a>
                 <a href="#skills" class="block py-2.5 font-medium">Skills</a>
                 <a href="#certifications" class="block py-2.5 font-medium">Certifications</a>
+                <a href="#courses" class="block py-2.5 font-medium">Courses</a>
                 <a href="#contact" class="block py-2.5 font-medium">Contact</a>
             </div>
         </nav>
@@ -250,7 +260,7 @@
             <div class="grid md:grid-cols-5 gap-12 items-center">
 
                 <div class="md:col-span-3 space-y-6 text-center md:text-left reveal">
-                    <span class="chip"><span class="w-2 h-2 rounded-full bg-emerald-400"></span> Open to junior Python developer roles</span>
+                    <span class="chip"><span class="w-2 h-2 rounded-full bg-emerald-400"></span> Open to Python, IT &amp; Internship Opportunities</span>
 
                     <h1 class="font-display text-4xl sm:text-5xl lg:text-6xl font-bold leading-[1.05] tracking-tight">
                         Hi, I'm <span class="gradient-text">Ahmed Muse</span>
@@ -511,6 +521,19 @@ app = <span class="f">FastAPI</span>()
         </div>
     </section>
 
+    <!-- Courses -->
+    <section id="courses" class="py-20 hidden">
+        <div class="max-w-6xl mx-auto px-4 sm:px-6">
+            <div class="text-center mb-10 reveal">
+                <div class="section-label">Courses</div>
+                <h2 class="font-display text-3xl sm:text-4xl font-bold mt-2">Learn With Me</h2>
+                <p class="muted mt-3">I offer mentorship and practical, skills-based courses. Pick the course you want, then message me on WhatsApp and I will share the details.</p>
+            </div>
+
+            <div id="courseGrid" class="grid sm:grid-cols-2 lg:grid-cols-3 gap-6"></div>
+        </div>
+    </section>
+
     <!-- Contact -->
     <section id="contact" class="py-20">
         <div class="max-w-6xl mx-auto px-4 sm:px-6">
@@ -700,6 +723,76 @@ app = <span class="f">FastAPI</span>()
             });
         }
         window.addEventListener('load', renderChart);
+    </script>
+
+    <script>
+        // ================= COURSES =================
+        const WHATSAPP_NUMBER = '252616186333'; // international format, no + or spaces
+
+        // EDIT YOUR COURSES HERE (intro = short paragraph shown on the card)
+        const COURSES = [
+            { title: 'Python for Beginners', level: 'Beginner', icon: 'fa-brands fa-python',
+              intro: 'Start programming from zero. You learn variables, conditions, loops and functions step by step, then put it all together by building small real projects.' },
+            { title: 'FastAPI Backend Development', level: 'Intermediate', icon: 'fa-solid fa-server',
+              intro: 'Learn to build fast, modern APIs with FastAPI and PostgreSQL, including data validation, authentication and how to deploy your project online.' },
+            { title: 'Computer Basics', level: 'Beginner', icon: 'fa-solid fa-computer',
+              intro: 'Get comfortable with computers. Covers the main parts, Windows, files and folders, typing, using the internet and email, and staying safe online.' },
+            { title: 'Microsoft Excel', level: 'Beginner – Intermediate', icon: 'fa-solid fa-file-excel',
+              intro: 'Go from simple formulas to powerful functions like SUM, IF and VLOOKUP, and learn to present your data with charts and pivot tables.' },
+            { title: 'Data Analysis with Python', level: 'Intermediate', icon: 'fa-solid fa-chart-column',
+              intro: 'Use Python, Pandas and Matplotlib to load, clean and explore real datasets, and turn the numbers into clear charts and useful insights.' },
+            { title: 'Fundamental AI Skills', level: 'Beginner', icon: 'fa-solid fa-robot',
+              intro: 'Understand what AI is and how to use it well. You learn to write clear prompts, choose the right tools and use AI responsibly for study and work.' }
+        ];
+
+        const esc = (s) => String(s).replace(/[&<>"']/g, ch => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[ch]));
+        const waLink = (title) => 'https://wa.me/' + WHATSAPP_NUMBER + '?text=' +
+            encodeURIComponent('Salaan Ahmed, waxaan jeclaan lahaa inaan dalbado koorsada "' + title + '". Fadlan ii soo dir faahfaahinta iyo files-ka.');
+
+        document.getElementById('courseGrid').innerHTML = COURSES.map(c => `
+            <article class="card card-hover course-card reveal show">
+                <div class="flex items-center justify-between gap-3 mb-5">
+                    <div class="course-icon"><i class="${esc(c.icon)}"></i></div>
+                    <span class="chip">${esc(c.level)}</span>
+                </div>
+                <h3 class="font-display text-xl font-bold leading-snug">${esc(c.title)}</h3>
+                <p class="course-intro mt-3 flex-1">${esc(c.intro)}</p>
+                <div class="mt-5 pt-4 flex justify-end" style="border-top: 1px solid var(--border);">
+                    <a href="${waLink(c.title)}" target="_blank" rel="noopener" class="btn-wa-sm">
+                        <i class="fa-brands fa-whatsapp text-sm"></i> Ask more Details
+                    </a>
+                </div>
+            </article>`).join('');
+
+
+        // Courses is a separate view: hidden on the home page, shown only when the Courses link is clicked
+        (function () {
+            const sec = document.getElementById('courses');
+            const setVisible = (v) => sec.classList.toggle('hidden', !v);
+            document.addEventListener('click', (e) => {
+                const a = e.target.closest('a[href^="#"]');
+                if (!a || a.getAttribute('href') === '#') return;
+                if (a.getAttribute('href') === '#courses') {
+                    e.preventDefault();
+                    setVisible(true);
+                    try { history.pushState(null, '', '#courses'); } catch (err) {}
+                    sec.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                } else {
+                    setVisible(false);
+                }
+            });
+            window.addEventListener('hashchange', () => setVisible(location.hash === '#courses'));
+            if (location.hash === '#courses') {
+                setVisible(true);
+                setTimeout(() => sec.scrollIntoView(), 50);
+            }
+        })();
+
+        // Add the Courses section to the active-nav tracker
+        (function () {
+            const el = document.getElementById('courses');
+            if (el && typeof spy !== 'undefined') spy.observe(el);
+        })();
     </script>
 </body>
 </html>
