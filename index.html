@@ -53,12 +53,13 @@
             color: var(--text);
             transition: background .3s, color .3s;
             -webkit-font-smoothing: antialiased;
+            overflow-x: hidden;
         }
         .font-display { font-family: 'Space Grotesk', 'Inter', sans-serif; }
         .muted { color: var(--muted); }
         .accent { color: var(--accent); }
 
-        /* Background layers */
+        /* Background layers (static, no filter:blur => no constant repaint) */
         .bg-grid {
             position: fixed; inset: 0; z-index: -2; pointer-events: none;
             background-image: linear-gradient(var(--border) 1px, transparent 1px), linear-gradient(90deg, var(--border) 1px, transparent 1px);
@@ -66,12 +67,13 @@
             mask-image: radial-gradient(ellipse at 50% 20%, #000 20%, transparent 75%);
             -webkit-mask-image: radial-gradient(ellipse at 50% 20%, #000 20%, transparent 75%);
             opacity: .55;
+            transform: translateZ(0);
         }
-        .blob { position: fixed; z-index: -1; border-radius: 9999px; filter: blur(110px); pointer-events: none; opacity: .5; }
-        .blob.one { width: 520px; height: 520px; top: -140px; left: -120px; background: #7c3aed; }
-        .blob.two { width: 460px; height: 460px; top: 120px; right: -140px; background: #0891b2; }
-        .blob.three { width: 380px; height: 380px; bottom: -120px; left: 35%; background: #db2777; opacity: .28; }
-        html:not(.dark) .blob { opacity: .18; }
+        .blob { position: fixed; z-index: -1; border-radius: 9999px; pointer-events: none; transform: translateZ(0); }
+        .blob.one { width: 700px; height: 700px; top: -300px; left: -280px; background: radial-gradient(circle, rgba(124,58,237,.55) 0%, rgba(124,58,237,0) 65%); }
+        .blob.two { width: 640px; height: 640px; top: -80px; right: -300px; background: radial-gradient(circle, rgba(8,145,178,.5) 0%, rgba(8,145,178,0) 65%); }
+        .blob.three { width: 560px; height: 560px; bottom: -280px; left: 25%; background: radial-gradient(circle, rgba(219,39,119,.28) 0%, rgba(219,39,119,0) 65%); }
+        html:not(.dark) .blob { opacity: .35; }
 
         /* Components */
         .card {
@@ -82,8 +84,16 @@
             -webkit-backdrop-filter: blur(14px);
             box-shadow: var(--shadow);
         }
+        /* Phones: blur on many cards while scrolling makes the whole UI shimmer */
+        @media (max-width: 767px) {
+            .card { backdrop-filter: none; -webkit-backdrop-filter: none; }
+            .dark .card { background: rgba(255, 255, 255, 0.06); }
+            html:not(.dark) .card { background: rgba(255, 255, 255, 0.92); }
+        }
         .card-hover { transition: transform .3s, border-color .3s; }
-        .card-hover:hover { transform: translateY(-4px); border-color: var(--accent); }
+        @media (hover: hover) {
+            .card-hover:hover { transform: translateY(-4px); border-color: var(--accent); }
+        }
         .gradient-text {
             background: linear-gradient(120deg, var(--g1), var(--g2));
             -webkit-background-clip: text; background-clip: text;
@@ -96,14 +106,16 @@
             box-shadow: 0 12px 30px -10px rgba(124, 58, 237, .6);
             transition: transform .25s, box-shadow .25s;
         }
-        .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 18px 36px -10px rgba(124, 58, 237, .75); }
         .btn-ghost {
             border: 1px solid var(--border); background: var(--card); color: var(--text); font-weight: 600;
             border-radius: 14px; padding: .8rem 1.4rem;
             display: inline-flex; align-items: center; gap: .6rem;
             transition: transform .25s, border-color .25s;
         }
-        .btn-ghost:hover { transform: translateY(-2px); border-color: var(--accent); }
+        @media (hover: hover) {
+            .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 18px 36px -10px rgba(124, 58, 237, .75); }
+            .btn-ghost:hover { transform: translateY(-2px); border-color: var(--accent); }
+        }
         .chip {
             display: inline-flex; align-items: center; gap: .4rem;
             padding: .35rem .8rem; border-radius: 999px;
@@ -131,33 +143,45 @@
         .field::placeholder { color: var(--muted); opacity: .7; }
         .field:focus { outline: none; border-color: var(--accent); box-shadow: 0 0 0 3px rgba(139, 92, 246, .25); }
 
-        /* Avatar */
+        /* Avatar: ONLY the gradient ring spins; the photo stays perfectly still */
         .avatar-ring {
+            position: relative; isolation: isolate; overflow: hidden;
             padding: 5px; border-radius: 9999px;
+        }
+        .avatar-ring::before {
+            content: ''; position: absolute; inset: -50%; z-index: -1;
             background: conic-gradient(from 180deg, #7c3aed, #22d3ee, #db2777, #7c3aed);
             animation: spin 10s linear infinite;
+            will-change: transform;
         }
-        .avatar-inner { background: var(--bg); border-radius: 9999px; padding: 6px; animation: spin-rev 10s linear infinite; }
+        .avatar-inner { background: var(--bg); border-radius: 9999px; padding: 6px; }
         @keyframes spin { to { transform: rotate(360deg); } }
-        @keyframes spin-rev { to { transform: rotate(-360deg); } }
-        .float { animation: float 6s ease-in-out infinite; }
-        @keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
+
+        /* Floating code card: no backdrop-filter on an animated element */
+        .float { animation: float 6s ease-in-out infinite; will-change: transform; }
+        @keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-8px); } }
+        .term-card { backdrop-filter: none !important; -webkit-backdrop-filter: none !important; background: rgba(15, 23, 42, 0.85); }
+        html:not(.dark) .term-card { background: rgba(255, 255, 255, 0.95); }
 
         /* Terminal card */
         .term { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: .78rem; line-height: 1.65; }
         .term .k { color: #c084fc; } .term .f { color: #38bdf8; } .term .s { color: #4ade80; } .term .c { color: #94a3b8; }
         html:not(.dark) .term .k { color: #7e22ce; } html:not(.dark) .term .f { color: #0369a1; } html:not(.dark) .term .s { color: #15803d; } html:not(.dark) .term .c { color: #64748b; }
 
+        /* Typed role: reserve room for 2 lines on phones so text wrapping never shifts the layout */
+        .typed-wrap { min-height: 3.5rem; }
+        @media (min-width: 640px) { .typed-wrap { min-height: 2.5rem; } }
+
         /* Typing caret */
         .caret { display: inline-block; width: 3px; height: 1.1em; margin-left: 4px; vertical-align: -0.15em; background: var(--accent); animation: blink 1s steps(1) infinite; }
         @keyframes blink { 50% { opacity: 0; } }
 
         /* Reveal on scroll */
-        .reveal { opacity: 0; transform: translateY(24px); transition: opacity .7s ease, transform .7s ease; }
-        .reveal.show { opacity: 1; transform: none; }
+        .reveal { opacity: 0; transform: translateY(24px); transition: opacity .7s ease, transform .7s ease; will-change: opacity, transform; }
+        .reveal.show { opacity: 1; transform: none; will-change: auto; }
         @media (prefers-reduced-motion: reduce) {
             .reveal { opacity: 1; transform: none; transition: none; }
-            .avatar-ring, .avatar-inner, .float, .caret { animation: none; }
+            .avatar-ring::before, .float, .caret { animation: none; }
         }
 
         /* Timeline */
@@ -232,7 +256,7 @@
                         Hi, I'm <span class="gradient-text">Ahmed Muse</span>
                     </h1>
 
-                    <p class="font-display text-xl sm:text-2xl font-medium" style="min-height: 2.2rem;">
+                    <p class="typed-wrap font-display text-xl sm:text-2xl font-medium">
                         <span id="typed" class="accent"></span><span class="caret"></span>
                     </p>
 
@@ -268,7 +292,7 @@
                         <span class="absolute bottom-4 right-4 w-6 h-6 rounded-full bg-emerald-400" style="border: 4px solid var(--bg);" title="Available"></span>
                     </div>
 
-                    <div class="card float w-full max-w-xs p-4 term" aria-hidden="true">
+                    <div class="card term-card float w-full max-w-xs p-4 term" aria-hidden="true">
                         <div class="flex gap-1.5 mb-3">
                             <span class="w-2.5 h-2.5 rounded-full bg-red-400"></span>
                             <span class="w-2.5 h-2.5 rounded-full bg-yellow-400"></span>
@@ -576,22 +600,38 @@ app = <span class="f">FastAPI</span>()
             const open = menu.classList.toggle('hidden') === false;
             menuBtn.setAttribute('aria-expanded', String(open));
         });
-        menu.querySelectorAll('a').forEach(a => a.addEventListener('click', () => menu.classList.add('hidden')));
+        menu.querySelectorAll('a').forEach(a => a.addEventListener('click', () => {
+            menu.classList.add('hidden');
+            menuBtn.setAttribute('aria-expanded', 'false');
+        }));
 
-        // Typing effect
+        // Typing effect: single timer, paused when the tab is hidden or the hero is off-screen
         const roles = ['Python Backend Developer', 'FastAPI Engineer', 'Data & AI Enthusiast', 'ICT Instructor & Mentor'];
         const typedEl = document.getElementById('typed');
         const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-        let r = 0, c = 0, deleting = false;
+        let r = 0, c = 0, deleting = false, timer = null, heroVisible = true;
+
+        function schedule(ms) { clearTimeout(timer); timer = setTimeout(type, ms); }
         function type() {
+            if (document.hidden || !heroVisible) return; // resumed by the observers below
             const word = roles[r];
-            typedEl.textContent = word.slice(0, c);
-            if (!deleting && c < word.length) { c++; setTimeout(type, 70); }
-            else if (!deleting) { deleting = true; setTimeout(type, 1500); }
-            else if (c > 0) { c--; setTimeout(type, 35); }
-            else { deleting = false; r = (r + 1) % roles.length; setTimeout(type, 300); }
+            const next = word.slice(0, c);
+            if (typedEl.textContent !== next) typedEl.textContent = next;
+            if (!deleting && c < word.length) { c++; schedule(70); }
+            else if (!deleting) { deleting = true; schedule(1500); }
+            else if (c > 0) { c--; schedule(35); }
+            else { deleting = false; r = (r + 1) % roles.length; schedule(300); }
         }
-        if (reduceMotion) { typedEl.textContent = roles[0]; } else { type(); }
+        if (reduceMotion) {
+            typedEl.textContent = roles[0];
+        } else {
+            type();
+            document.addEventListener('visibilitychange', () => { if (!document.hidden) schedule(100); });
+            new IntersectionObserver((entries) => {
+                heroVisible = entries[0].isIntersecting;
+                if (heroVisible) schedule(100);
+            }).observe(document.getElementById('hero'));
+        }
 
         // Reveal on scroll
         const io = new IntersectionObserver((entries) => {
@@ -625,13 +665,14 @@ app = <span class="f">FastAPI</span>()
             setTimeout(() => status.classList.add('hidden'), 5000);
         });
 
-        // Radar chart
+        // Radar chart: animate once only (no re-animation on theme toggle / resize)
         let chart = null;
         function renderChart() {
             const dark = root.classList.contains('dark');
             const text = dark ? '#cbd5e1' : '#334155';
             const grid = dark ? 'rgba(255,255,255,0.12)' : 'rgba(15,23,42,0.12)';
             const line = dark ? '#22d3ee' : '#6d28d9';
+            const firstTime = chart === null;
             if (chart) chart.destroy();
             chart = new Chart(document.getElementById('skillsChart').getContext('2d'), {
                 type: 'radar',
@@ -647,6 +688,7 @@ app = <span class="f">FastAPI</span>()
                 },
                 options: {
                     responsive: true, maintainAspectRatio: false,
+                    animation: firstTime ? { duration: 800 } : false,
                     scales: { r: {
                         angleLines: { color: grid }, grid: { color: grid },
                         pointLabels: { color: text, font: { size: 11, family: 'Inter', weight: '600' } },
