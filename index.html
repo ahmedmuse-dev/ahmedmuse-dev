@@ -8,7 +8,7 @@
     <meta property="og:title" content="Ahmed Muse Farah | Python Backend Developer">
     <meta property="og:description" content="Portfolio and CV of Ahmed Muse Farah: Python, FastAPI, PostgreSQL, data analysis and mentoring.">
     <meta property="og:type" content="website">
-    <meta name="theme-color" content="#060a16">
+    <meta name="theme-color" content="#02060E">
 
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
@@ -20,31 +20,34 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
     <style>
+        /* ============ Forest Noir palette: #02060E (noir) + #007D10 (forest green) ============ */
         :root {
-            --bg: #f5f6fb;
-            --text: #0f172a;
-            --muted: #475569;
-            --card: rgba(255, 255, 255, 0.8);
-            --border: rgba(15, 23, 42, 0.1);
-            --chip: rgba(124, 58, 237, 0.08);
-            --g1: #6d28d9;
-            --g2: #0e7490;
-            --accent: #6d28d9;
-            --btn: linear-gradient(120deg, #7c3aed, #0369a1);
-            --shadow: 0 10px 40px -12px rgba(76, 29, 149, 0.25);
+            --bg: #f1f7f2;
+            --text: #04130a;
+            --muted: #3f5a47;
+            --card: rgba(255, 255, 255, 0.85);
+            --border: rgba(2, 6, 14, 0.1);
+            --chip: rgba(0, 125, 16, 0.09);
+            --g1: #007D10;
+            --g2: #0b5d1e;
+            --accent: #007D10;
+            --btn: linear-gradient(120deg, #007D10, #0aa31f);
+            --shadow: 0 10px 40px -12px rgba(0, 125, 16, 0.3);
+            --glow: rgba(0, 125, 16, .55);
         }
         .dark {
-            --bg: #060a16;
-            --text: #e8ecf8;
-            --muted: #a3b0cf;
-            --card: rgba(255, 255, 255, 0.045);
-            --border: rgba(255, 255, 255, 0.1);
-            --chip: rgba(139, 92, 246, 0.14);
-            --g1: #a78bfa;
-            --g2: #22d3ee;
-            --accent: #22d3ee;
-            --btn: linear-gradient(120deg, #7c3aed, #0284c7);
-            --shadow: 0 10px 50px -15px rgba(0, 0, 0, 0.8);
+            --bg: #02060E;
+            --text: #e9f5ec;
+            --muted: #9db5a3;
+            --card: rgba(255, 255, 255, 0.04);
+            --border: rgba(255, 255, 255, 0.09);
+            --chip: rgba(0, 125, 16, 0.2);
+            --g1: #86efac;
+            --g2: #22c55e;
+            --accent: #3ddc54;
+            --btn: linear-gradient(120deg, #007D10, #00a516);
+            --shadow: 0 10px 50px -15px rgba(0, 0, 0, 0.9);
+            --glow: rgba(0, 125, 16, .7);
         }
         html { scroll-padding-top: 90px; }
         body {
@@ -55,11 +58,15 @@
             -webkit-font-smoothing: antialiased;
             overflow-x: hidden;
         }
+        ::selection { background: #007D10; color: #fff; }
         .font-display { font-family: 'Space Grotesk', 'Inter', sans-serif; }
         .muted { color: var(--muted); }
         .accent { color: var(--accent); }
 
-        /* Background layers (static, no filter:blur => no constant repaint) */
+        /* Scroll progress bar */
+        #progress { position: fixed; top: 0; left: 0; height: 3px; width: 0; z-index: 100; background: linear-gradient(90deg, #007D10, #4ade80); }
+
+        /* Background layers */
         .bg-grid {
             position: fixed; inset: 0; z-index: -2; pointer-events: none;
             background-image: linear-gradient(var(--border) 1px, transparent 1px), linear-gradient(90deg, var(--border) 1px, transparent 1px);
@@ -70,10 +77,10 @@
             transform: translateZ(0);
         }
         .blob { position: fixed; z-index: -1; border-radius: 9999px; pointer-events: none; transform: translateZ(0); }
-        .blob.one { width: 700px; height: 700px; top: -300px; left: -280px; background: radial-gradient(circle, rgba(124,58,237,.55) 0%, rgba(124,58,237,0) 65%); }
-        .blob.two { width: 640px; height: 640px; top: -80px; right: -300px; background: radial-gradient(circle, rgba(8,145,178,.5) 0%, rgba(8,145,178,0) 65%); }
-        .blob.three { width: 560px; height: 560px; bottom: -280px; left: 25%; background: radial-gradient(circle, rgba(219,39,119,.28) 0%, rgba(219,39,119,0) 65%); }
-        html:not(.dark) .blob { opacity: .35; }
+        .blob.one { width: 720px; height: 720px; top: -320px; left: -300px; background: radial-gradient(circle, rgba(0,125,16,.6) 0%, rgba(0,125,16,0) 65%); }
+        .blob.two { width: 640px; height: 640px; top: -60px; right: -320px; background: radial-gradient(circle, rgba(0,160,30,.38) 0%, rgba(0,160,30,0) 65%); }
+        .blob.three { width: 600px; height: 600px; bottom: -300px; left: 25%; background: radial-gradient(circle, rgba(0,125,16,.32) 0%, rgba(0,125,16,0) 65%); }
+        html:not(.dark) .blob { opacity: .3; }
 
         /* Components */
         .card {
@@ -84,15 +91,14 @@
             -webkit-backdrop-filter: blur(14px);
             box-shadow: var(--shadow);
         }
-        /* Phones: blur on many cards while scrolling makes the whole UI shimmer */
         @media (max-width: 767px) {
             .card { backdrop-filter: none; -webkit-backdrop-filter: none; }
-            .dark .card { background: rgba(255, 255, 255, 0.06); }
-            html:not(.dark) .card { background: rgba(255, 255, 255, 0.92); }
+            .dark .card { background: rgba(255, 255, 255, 0.05); }
+            html:not(.dark) .card { background: rgba(255, 255, 255, 0.94); }
         }
-        .card-hover { transition: transform .3s, border-color .3s; }
+        .card-hover { transition: transform .3s, border-color .3s, box-shadow .3s; }
         @media (hover: hover) {
-            .card-hover:hover { transform: translateY(-4px); border-color: var(--accent); }
+            .card-hover:hover { transform: translateY(-4px); border-color: var(--accent); box-shadow: 0 18px 50px -18px var(--glow); }
         }
         .gradient-text {
             background: linear-gradient(120deg, var(--g1), var(--g2));
@@ -103,7 +109,7 @@
             background: var(--btn); color: #fff; font-weight: 600;
             border-radius: 14px; padding: .8rem 1.4rem;
             display: inline-flex; align-items: center; gap: .6rem;
-            box-shadow: 0 12px 30px -10px rgba(124, 58, 237, .6);
+            box-shadow: 0 12px 30px -10px var(--glow);
             transition: transform .25s, box-shadow .25s;
         }
         .btn-ghost {
@@ -113,7 +119,7 @@
             transition: transform .25s, border-color .25s;
         }
         @media (hover: hover) {
-            .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 18px 36px -10px rgba(124, 58, 237, .75); }
+            .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 18px 36px -10px var(--glow); }
             .btn-ghost:hover { transform: translateY(-2px); border-color: var(--accent); }
         }
         .chip {
@@ -141,38 +147,86 @@
             transition: border-color .2s, box-shadow .2s;
         }
         .field::placeholder { color: var(--muted); opacity: .7; }
-        .field:focus { outline: none; border-color: var(--accent); box-shadow: 0 0 0 3px rgba(139, 92, 246, .25); }
+        .field:focus { outline: none; border-color: var(--accent); box-shadow: 0 0 0 3px rgba(0, 160, 30, .28); }
 
-        /* Avatar: ONLY the gradient ring spins; the photo stays perfectly still */
+        /* ============ Social icons ============ */
+        .social-row { display: flex; flex-wrap: wrap; gap: .6rem; }
+        .social-btn {
+            --brand: var(--accent);
+            width: 46px; height: 46px; border-radius: 9999px; display: grid; place-items: center;
+            font-size: 1.15rem; color: var(--text);
+            background: var(--card); border: 1px solid var(--border);
+            transition: transform .25s, background .25s, color .25s, border-color .25s, box-shadow .25s;
+        }
+        .social-btn.wa { --brand: #25D366; }
+        .social-btn.fb { --brand: #1877F2; }
+        .social-btn.gh { --brand: #8b949e; }
+        .social-btn.in { --brand: #0A66C2; }
+        .social-btn.tt { --brand: #fe2c55; }
+        .social-btn.ig { --brand: #E4405F; }
+        .social-btn.tg { --brand: #229ED9; }
+        .social-btn.ml { --brand: #00a516; }
+        @media (hover: hover) {
+            .social-btn:hover { transform: translateY(-3px) scale(1.06); background: var(--brand); border-color: var(--brand); color: #fff; box-shadow: 0 12px 26px -10px var(--brand); }
+        }
+        .social-btn:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
+
+        .social-card {
+            --brand: var(--accent);
+            display: flex; align-items: center; justify-content: center; gap: .6rem;
+            padding: 1rem; font-size: .88rem; font-weight: 600;
+        }
+        .social-card i { font-size: 1.35rem; color: var(--brand); transition: transform .25s; }
+        .social-card.wa { --brand: #25D366; }
+        .social-card.fb { --brand: #1877F2; }
+        .social-card.tt { --brand: #fe2c55; }
+        .social-card.gh { --brand: var(--text); }
+        .social-card.in { --brand: #0A66C2; }
+        @media (hover: hover) { .social-card:hover i { transform: scale(1.18); } .social-card:hover { border-color: var(--brand); } }
+
+        /* Floating WhatsApp button */
+        .wa-float {
+            position: fixed; right: 18px; bottom: 18px; z-index: 60;
+            width: 58px; height: 58px; border-radius: 9999px; display: grid; place-items: center;
+            background: #25D366; color: #fff; font-size: 1.9rem;
+            box-shadow: 0 14px 30px -8px rgba(37, 211, 102, .7);
+            transition: transform .25s;
+        }
+        .wa-float::after {
+            content: ''; position: absolute; inset: 0; border-radius: 9999px; border: 2px solid #25D366;
+            animation: ping 2.2s cubic-bezier(0,0,.2,1) infinite;
+        }
+        @keyframes ping { 0% { transform: scale(1); opacity: .8; } 80%, 100% { transform: scale(1.7); opacity: 0; } }
+        @media (hover: hover) { .wa-float:hover { transform: scale(1.08); } }
+
+        /* Avatar: only the ring spins */
         .avatar-ring {
             position: relative; isolation: isolate; overflow: hidden;
             padding: 5px; border-radius: 9999px;
         }
         .avatar-ring::before {
             content: ''; position: absolute; inset: -50%; z-index: -1;
-            background: conic-gradient(from 180deg, #7c3aed, #22d3ee, #db2777, #7c3aed);
+            background: conic-gradient(from 180deg, #007D10, #86efac, #02060E, #00a516, #007D10);
             animation: spin 10s linear infinite;
             will-change: transform;
         }
         .avatar-inner { background: var(--bg); border-radius: 9999px; padding: 6px; }
         @keyframes spin { to { transform: rotate(360deg); } }
 
-        /* Floating code card: no backdrop-filter on an animated element */
+        /* Floating code card */
         .float { animation: float 6s ease-in-out infinite; will-change: transform; }
         @keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-8px); } }
-        .term-card { backdrop-filter: none !important; -webkit-backdrop-filter: none !important; background: rgba(15, 23, 42, 0.85); }
-        html:not(.dark) .term-card { background: rgba(255, 255, 255, 0.95); }
+        .term-card { backdrop-filter: none !important; -webkit-backdrop-filter: none !important; background: rgba(2, 6, 14, 0.9); border-color: rgba(0, 160, 30, .35); }
+        html:not(.dark) .term-card { background: rgba(255, 255, 255, 0.96); }
 
-        /* Terminal card */
-        .term { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: .78rem; line-height: 1.65; }
-        .term .k { color: #c084fc; } .term .f { color: #38bdf8; } .term .s { color: #4ade80; } .term .c { color: #94a3b8; }
-        html:not(.dark) .term .k { color: #7e22ce; } html:not(.dark) .term .f { color: #0369a1; } html:not(.dark) .term .s { color: #15803d; } html:not(.dark) .term .c { color: #64748b; }
+        .term { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: .78rem; line-height: 1.65; color: #e9f5ec; }
+        .term .k { color: #4ade80; } .term .f { color: #5eead4; } .term .s { color: #bef264; } .term .c { color: #94a3b8; }
+        html:not(.dark) .term { color: #04130a; }
+        html:not(.dark) .term .k { color: #007D10; } html:not(.dark) .term .f { color: #0f766e; } html:not(.dark) .term .s { color: #4d7c0f; } html:not(.dark) .term .c { color: #64748b; }
 
-        /* Typed role: reserve room for 2 lines on phones so text wrapping never shifts the layout */
         .typed-wrap { min-height: 3.5rem; }
         @media (min-width: 640px) { .typed-wrap { min-height: 2.5rem; } }
 
-        /* Typing caret */
         .caret { display: inline-block; width: 3px; height: 1.1em; margin-left: 4px; vertical-align: -0.15em; background: var(--accent); animation: blink 1s steps(1) infinite; }
         @keyframes blink { 50% { opacity: 0; } }
 
@@ -181,7 +235,7 @@
         .reveal.show { opacity: 1; transform: none; will-change: auto; }
         @media (prefers-reduced-motion: reduce) {
             .reveal { opacity: 1; transform: none; transition: none; }
-            .avatar-ring::before, .float, .caret { animation: none; }
+            .avatar-ring::before, .float, .caret, .wa-float::after { animation: none; }
         }
 
         /* Timeline */
@@ -197,8 +251,8 @@
         }
         .dot::after { content: ''; width: 8px; height: 8px; border-radius: 9999px; background: var(--accent); }
 
-        /* Navbar: always opaque so page content never shows through the menu */
-        #siteNav { background: rgba(9, 13, 27, 0.97); backdrop-filter: none; -webkit-backdrop-filter: none; }
+        /* Navbar */
+        #siteNav { background: rgba(2, 6, 14, 0.96); backdrop-filter: none; -webkit-backdrop-filter: none; border-color: rgba(0, 160, 30, .22); }
         html:not(.dark) #siteNav { background: rgba(255, 255, 255, 0.98); }
         #mobileMenu { max-height: calc(100vh - 110px); overflow-y: auto; }
         #siteNav .btn-primary { white-space: nowrap; }
@@ -206,14 +260,15 @@
         /* Courses */
         .course-card { padding: 1.5rem; display: flex; flex-direction: column; position: relative; overflow: hidden; }
         .course-card::before { content: ''; position: absolute; left: 0; right: 0; top: 0; height: 3px; background: linear-gradient(120deg, var(--g1), var(--g2)); opacity: .9; }
-        .course-icon { width: 52px; height: 52px; border-radius: 16px; display: grid; place-items: center; font-size: 1.35rem; color: #fff; background: var(--btn); box-shadow: 0 10px 24px -10px rgba(124, 58, 237, .7); }
+        .course-icon { width: 52px; height: 52px; border-radius: 16px; display: grid; place-items: center; font-size: 1.35rem; color: #fff; background: var(--btn); box-shadow: 0 10px 24px -10px var(--glow); }
         .course-intro { font-size: .9rem; line-height: 1.7; color: var(--muted); }
-        .btn-wa-sm { display: inline-flex; align-items: center; gap: .45rem; padding: .45rem .9rem; border-radius: 999px; font-size: .78rem; font-weight: 600; color: #22c55e; background: rgba(34, 197, 94, .12); border: 1px solid rgba(34, 197, 94, .35); transition: background .2s, color .2s; }
-        @media (hover: hover) { .btn-wa-sm:hover { background: #22c55e; color: #fff; } }
+        .btn-wa-sm { display: inline-flex; align-items: center; gap: .45rem; padding: .45rem .9rem; border-radius: 999px; font-size: .78rem; font-weight: 600; color: #25D366; background: rgba(37, 211, 102, .12); border: 1px solid rgba(37, 211, 102, .4); transition: background .2s, color .2s; }
+        @media (hover: hover) { .btn-wa-sm:hover { background: #25D366; color: #fff; } }
     </style>
 </head>
 <body>
 
+    <div id="progress"></div>
     <div class="bg-grid"></div>
     <div class="blob one"></div>
     <div class="blob two"></div>
@@ -255,9 +310,19 @@
                 <a href="#certifications" class="block py-2.5 font-medium">Certifications</a>
                 <a href="#courses" class="block py-2.5 font-medium">Courses</a>
                 <a href="#contact" class="block py-2.5 font-medium">Contact</a>
+                <div class="social-row pt-3">
+                    <a href="https://wa.me/252616186333" target="_blank" rel="noopener" class="social-btn wa" aria-label="WhatsApp"><i class="fa-brands fa-whatsapp"></i></a>
+                    <a href="https://www.facebook.com/ahmedmuse97" target="_blank" rel="noopener" class="social-btn fb" aria-label="Facebook"><i class="fa-brands fa-facebook-f"></i></a>
+                    <a href="https://www.tiktok.com/@ahmedmuse.dev" target="_blank" rel="noopener" class="social-btn tt" aria-label="TikTok"><i class="fa-brands fa-tiktok"></i></a>
+                    <a href="https://github.com/ahmedmuse-dev" target="_blank" rel="noopener" class="social-btn gh" aria-label="GitHub"><i class="fa-brands fa-github"></i></a>
+                    <a href="https://www.linkedin.com/in/axmedmuuse" target="_blank" rel="noopener" class="social-btn in" aria-label="LinkedIn"><i class="fa-brands fa-linkedin-in"></i></a>
+                </div>
             </div>
         </nav>
     </header>
+
+    <!-- Floating WhatsApp -->
+    <a href="https://wa.me/252616186333?text=Salaan%20Ahmed" target="_blank" rel="noopener" class="wa-float" aria-label="Chat on WhatsApp"><i class="fa-brands fa-whatsapp"></i></a>
 
     <main>
     <!-- Hero -->
@@ -282,8 +347,18 @@
 
                     <div class="flex flex-wrap justify-center md:justify-start gap-3 pt-1">
                         <a href="#contact" class="btn-primary"><i class="fa-solid fa-paper-plane"></i> Contact Me</a>
-                        <a href="https://github.com/ahmedmuse-dev" target="_blank" rel="noopener" class="btn-ghost"><i class="fa-brands fa-github"></i> GitHub</a>
+                        <a href="https://wa.me/252616186333?text=Salaan%20Ahmed" target="_blank" rel="noopener" class="btn-ghost"><i class="fa-brands fa-whatsapp" style="color:#25D366"></i> WhatsApp</a>
                         <a href="#experience" class="btn-ghost"><i class="fa-solid fa-briefcase accent"></i> Experience</a>
+                    </div>
+
+                    <!-- Social icons (edit the links here) -->
+                    <div class="social-row justify-center md:justify-start pt-1">
+                        <a href="https://wa.me/252616186333" target="_blank" rel="noopener" class="social-btn wa" aria-label="WhatsApp" title="WhatsApp"><i class="fa-brands fa-whatsapp"></i></a>
+                        <a href="https://www.facebook.com/ahmedmuse97" target="_blank" rel="noopener" class="social-btn fb" aria-label="Facebook" title="Facebook"><i class="fa-brands fa-facebook-f"></i></a>
+                        <a href="https://www.tiktok.com/@ahmedmuse.dev" target="_blank" rel="noopener" class="social-btn tt" aria-label="TikTok" title="TikTok"><i class="fa-brands fa-tiktok"></i></a>
+                        <a href="https://github.com/ahmedmuse-dev" target="_blank" rel="noopener" class="social-btn gh" aria-label="GitHub" title="GitHub"><i class="fa-brands fa-github"></i></a>
+                        <a href="https://www.linkedin.com/in/axmedmuuse" target="_blank" rel="noopener" class="social-btn in" aria-label="LinkedIn" title="LinkedIn"><i class="fa-brands fa-linkedin-in"></i></a>
+                        <a href="mailto:ahmedmuse.am97@gmail.com" class="social-btn ml" aria-label="Email" title="Email"><i class="fa-solid fa-envelope"></i></a>
                     </div>
 
                     <div class="flex flex-wrap justify-center md:justify-start gap-2 pt-2">
@@ -326,10 +401,10 @@ app = <span class="f">FastAPI</span>()
 
             <!-- Stats -->
             <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 mt-16 reveal">
-                <div class="card p-5 text-center"><div class="font-display text-3xl font-bold gradient-text">4+</div><div class="muted text-sm mt-1">Years in Tech &amp; Education</div></div>
-                <div class="card p-5 text-center"><div class="font-display text-3xl font-bold gradient-text">100+</div><div class="muted text-sm mt-1">Students Mentored</div></div>
-                <div class="card p-5 text-center"><div class="font-display text-3xl font-bold gradient-text">B.Sc.</div><div class="muted text-sm mt-1">Computer Applications</div></div>
-                <div class="card p-5 text-center"><div class="font-display text-3xl font-bold gradient-text">2</div><div class="muted text-sm mt-1">Coursera Certifications</div></div>
+                <div class="card card-hover p-5 text-center"><div class="font-display text-3xl font-bold gradient-text">4+</div><div class="muted text-sm mt-1">Years in Tech &amp; Education</div></div>
+                <div class="card card-hover p-5 text-center"><div class="font-display text-3xl font-bold gradient-text">100+</div><div class="muted text-sm mt-1">Students Mentored</div></div>
+                <div class="card card-hover p-5 text-center"><div class="font-display text-3xl font-bold gradient-text">B.Sc.</div><div class="muted text-sm mt-1">Computer Applications</div></div>
+                <div class="card card-hover p-5 text-center"><div class="font-display text-3xl font-bold gradient-text">2</div><div class="muted text-sm mt-1">Coursera Certifications</div></div>
             </div>
         </div>
     </section>
@@ -398,7 +473,7 @@ app = <span class="f">FastAPI</span>()
                         <div class="text-xs font-bold accent mb-2">2026 – Present</div>
                         <div class="flex flex-wrap items-center justify-between gap-2">
                             <h3 class="font-display text-xl font-bold">Python Backend Developer</h3>
-                            <span class="chip" style="color: #34d399;">Freelance / Personal Project</span>
+                            <span class="chip" style="color: #4ade80;">Freelance / Personal Project</span>
                         </div>
                         <h4 class="text-sm font-semibold accent mt-1 mb-3">Shipping Management System</h4>
                         <p class="muted text-sm leading-relaxed">
@@ -416,7 +491,7 @@ app = <span class="f">FastAPI</span>()
                         <div class="text-xs font-bold accent mb-2">2025 – 2026</div>
                         <div class="flex flex-wrap items-center justify-between gap-2">
                             <h3 class="font-display text-xl font-bold">Full-Stack Mentorship Program</h3>
-                            <span class="chip" style="color: #60a5fa;">dugsiiye Platform</span>
+                            <span class="chip" style="color: #5eead4;">dugsiiye Platform</span>
                         </div>
                         <p class="muted text-sm leading-relaxed mt-3">
                             Assisted students enrolled in full-stack development programs with debugging, code reviews, and project troubleshooting, reinforcing core software engineering practices.
@@ -433,7 +508,7 @@ app = <span class="f">FastAPI</span>()
                         <div class="text-xs font-bold accent mb-2">2022 – 2025</div>
                         <div class="flex flex-wrap items-center justify-between gap-2">
                             <h3 class="font-display text-xl font-bold">ICT &amp; Instructor</h3>
-                            <span class="chip" style="color: #c084fc;">Sodemy &amp; Abqaal Schools</span>
+                            <span class="chip" style="color: #bef264;">Sodemy &amp; Abqaal Schools</span>
                         </div>
                         <p class="muted text-sm leading-relaxed mt-3">
                             Taught high school students basic computer skills, digital literacy, and ICT fundamentals, cultivating an early interest in modern technologies.
@@ -557,15 +632,18 @@ app = <span class="f">FastAPI</span>()
                     </a>
                     <a href="tel:+252616186333" class="card card-hover p-5 flex items-center gap-4">
                         <div class="icon-box"><i class="fa-solid fa-phone"></i></div>
-                        <div><div class="muted text-xs">Call / WhatsApp</div><div class="text-sm font-bold">+252 616 186 333</div></div>
+                        <div><div class="muted text-xs">Call</div><div class="text-sm font-bold">+252 616 186 333</div></div>
                     </a>
                     <div class="card p-5 flex items-center gap-4">
                         <div class="icon-box"><i class="fa-solid fa-location-dot"></i></div>
                         <div><div class="muted text-xs">Location</div><div class="text-sm font-bold">Mogadishu, Somalia</div></div>
                     </div>
-                    <div class="flex gap-3">
-                        <a href="https://github.com/ahmedmuse-dev" target="_blank" rel="noopener" class="card card-hover flex-1 p-4 flex items-center justify-center gap-2 text-sm font-semibold"><i class="fa-brands fa-github text-lg"></i> GitHub</a>
-                        <a href="https://www.linkedin.com/in/axmedmuuse" target="_blank" rel="noopener" class="card card-hover flex-1 p-4 flex items-center justify-center gap-2 text-sm font-semibold"><i class="fa-brands fa-linkedin text-lg"></i> LinkedIn</a>
+                    <div class="grid grid-cols-2 gap-3">
+                        <a href="https://wa.me/252616186333?text=Salaan%20Ahmed" target="_blank" rel="noopener" class="card card-hover social-card wa"><i class="fa-brands fa-whatsapp"></i> WhatsApp</a>
+                        <a href="https://www.facebook.com/ahmedmuse97" target="_blank" rel="noopener" class="card card-hover social-card fb"><i class="fa-brands fa-facebook"></i> Facebook</a>
+                        <a href="https://www.tiktok.com/@ahmedmuse.dev" target="_blank" rel="noopener" class="card card-hover social-card tt col-span-2"><i class="fa-brands fa-tiktok"></i> TikTok</a>
+                        <a href="https://github.com/ahmedmuse-dev" target="_blank" rel="noopener" class="card card-hover social-card gh"><i class="fa-brands fa-github"></i> GitHub</a>
+                        <a href="https://www.linkedin.com/in/axmedmuuse" target="_blank" rel="noopener" class="card card-hover social-card in"><i class="fa-brands fa-linkedin"></i> LinkedIn</a>
                     </div>
                 </div>
 
@@ -589,7 +667,7 @@ app = <span class="f">FastAPI</span>()
                             <label for="cMessage" class="block text-xs font-semibold mb-1.5">Message</label>
                             <textarea id="cMessage" rows="5" required placeholder="Write your message here..." class="field" style="resize: none;"></textarea>
                         </div>
-                        <div id="formStatus" class="hidden text-sm p-3 rounded-xl" style="background: rgba(52, 211, 153, .15); color: #34d399;" role="status">
+                        <div id="formStatus" class="hidden text-sm p-3 rounded-xl" style="background: rgba(0, 160, 30, .15); color: #4ade80;" role="status">
                             Your email app is opening with the message ready to send.
                         </div>
                         <button type="submit" class="btn-primary w-full justify-center"><i class="fa-solid fa-paper-plane"></i> Send Message</button>
@@ -601,14 +679,28 @@ app = <span class="f">FastAPI</span>()
     </main>
 
     <footer class="py-8 text-center text-xs muted" style="border-top: 1px solid var(--border);">
-        <div class="max-w-6xl mx-auto px-4 flex flex-col sm:flex-row justify-between items-center gap-3">
+        <div class="max-w-6xl mx-auto px-4 flex flex-col sm:flex-row justify-between items-center gap-4">
             <div>© <span id="year"></span> Ahmed Muse Farah. All rights reserved.</div>
+            <div class="social-row">
+                <a href="https://wa.me/252616186333" target="_blank" rel="noopener" class="social-btn wa" style="width:38px;height:38px;font-size:1rem" aria-label="WhatsApp"><i class="fa-brands fa-whatsapp"></i></a>
+                <a href="https://www.facebook.com/ahmedmuse97" target="_blank" rel="noopener" class="social-btn fb" style="width:38px;height:38px;font-size:1rem" aria-label="Facebook"><i class="fa-brands fa-facebook-f"></i></a>
+                <a href="https://www.tiktok.com/@ahmedmuse.dev" target="_blank" rel="noopener" class="social-btn tt" style="width:38px;height:38px;font-size:1rem" aria-label="TikTok"><i class="fa-brands fa-tiktok"></i></a>
+                <a href="https://github.com/ahmedmuse-dev" target="_blank" rel="noopener" class="social-btn gh" style="width:38px;height:38px;font-size:1rem" aria-label="GitHub"><i class="fa-brands fa-github"></i></a>
+                <a href="https://www.linkedin.com/in/axmedmuuse" target="_blank" rel="noopener" class="social-btn in" style="width:38px;height:38px;font-size:1rem" aria-label="LinkedIn"><i class="fa-brands fa-linkedin-in"></i></a>
+            </div>
             <a href="#hero" class="hover:underline">Back to top <i class="fa-solid fa-arrow-up text-[10px]"></i></a>
         </div>
     </footer>
 
     <script>
         document.getElementById('year').textContent = new Date().getFullYear();
+
+        // Scroll progress bar
+        const bar = document.getElementById('progress');
+        window.addEventListener('scroll', () => {
+            const h = document.documentElement.scrollHeight - window.innerHeight;
+            bar.style.width = (h > 0 ? (window.scrollY / h) * 100 : 0) + '%';
+        }, { passive: true });
 
         // Theme (dark by default, remembered when storage is available)
         const root = document.documentElement;
@@ -634,7 +726,7 @@ app = <span class="f">FastAPI</span>()
             menuBtn.setAttribute('aria-expanded', 'false');
         }));
 
-        // Typing effect: single timer, paused when the tab is hidden or the hero is off-screen
+        // Typing effect
         const roles = ['Python Backend Developer', 'FastAPI Engineer', 'Data & AI Enthusiast', 'ICT Instructor & Mentor'];
         const typedEl = document.getElementById('typed');
         const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -642,7 +734,7 @@ app = <span class="f">FastAPI</span>()
 
         function schedule(ms) { clearTimeout(timer); timer = setTimeout(type, ms); }
         function type() {
-            if (document.hidden || !heroVisible) return; // resumed by the observers below
+            if (document.hidden || !heroVisible) return;
             const word = roles[r];
             const next = word.slice(0, c);
             if (typedEl.textContent !== next) typedEl.textContent = next;
@@ -680,7 +772,7 @@ app = <span class="f">FastAPI</span>()
         }, { rootMargin: '-45% 0px -50% 0px' });
         sections.forEach(s => spy.observe(s));
 
-        // Contact form: opens the visitor's email app with everything filled in
+        // Contact form
         document.getElementById('contactForm').addEventListener('submit', (e) => {
             e.preventDefault();
             const name = document.getElementById('cName').value.trim();
@@ -694,13 +786,13 @@ app = <span class="f">FastAPI</span>()
             setTimeout(() => status.classList.add('hidden'), 5000);
         });
 
-        // Radar chart: animate once only (no re-animation on theme toggle / resize)
+        // Radar chart (forest green theme)
         let chart = null;
         function renderChart() {
             const dark = root.classList.contains('dark');
-            const text = dark ? '#cbd5e1' : '#334155';
-            const grid = dark ? 'rgba(255,255,255,0.12)' : 'rgba(15,23,42,0.12)';
-            const line = dark ? '#22d3ee' : '#6d28d9';
+            const text = dark ? '#cfe8d5' : '#1f3d2a';
+            const grid = dark ? 'rgba(255,255,255,0.12)' : 'rgba(2,6,14,0.12)';
+            const line = dark ? '#3ddc54' : '#007D10';
             const firstTime = chart === null;
             if (chart) chart.destroy();
             chart = new Chart(document.getElementById('skillsChart').getContext('2d'), {
@@ -710,7 +802,7 @@ app = <span class="f">FastAPI</span>()
                     datasets: [{
                         label: 'Proficiency Level',
                         data: [90, 85, 80, 75, 78, 92],
-                        backgroundColor: dark ? 'rgba(34, 211, 238, 0.22)' : 'rgba(109, 40, 217, 0.2)',
+                        backgroundColor: dark ? 'rgba(0, 160, 30, 0.28)' : 'rgba(0, 125, 16, 0.2)',
                         borderColor: line, borderWidth: 2,
                         pointBackgroundColor: line, pointBorderColor: '#fff'
                     }]
@@ -733,9 +825,8 @@ app = <span class="f">FastAPI</span>()
 
     <script>
         // ================= COURSES =================
-        const WHATSAPP_NUMBER = '252616186333'; // international format, no + or spaces
+        const WHATSAPP_NUMBER = '252616186333';
 
-        // EDIT YOUR COURSES HERE (intro = short paragraph shown on the card)
         const COURSES = [
             { title: 'Python for Beginners', level: 'Beginner', icon: 'fa-brands fa-python',
               intro: 'Start programming from zero. You learn variables, conditions, loops and functions step by step, then put it all together by building small real projects.' },
@@ -770,7 +861,6 @@ app = <span class="f">FastAPI</span>()
                 </div>
             </article>`).join('');
 
-
         // Courses is a separate view: hidden on the home page, shown only when the Courses link is clicked
         (function () {
             const sec = document.getElementById('courses');
@@ -794,7 +884,6 @@ app = <span class="f">FastAPI</span>()
             }
         })();
 
-        // Add the Courses section to the active-nav tracker
         (function () {
             const el = document.getElementById('courses');
             if (el && typeof spy !== 'undefined') spy.observe(el);
